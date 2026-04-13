@@ -130,7 +130,7 @@ app = FastAPI(
 
 @app.get("/")
 def inicio():
-    return {"status": "online", "mensaje": "Bienvenido al sistema de agentes"}
+    return {"status": "online", "mensaje": "Bienvenido al sistema de agentes con FastAPI"}
 
 
 # PRUEBA: Abre http://localhost:8000/docs en tu navegador. Esa es Swagger UI.
@@ -139,6 +139,9 @@ def inicio():
 # PRUEBA: Cambia el mensaje de arriba, guarda el archivo, y recarga /docs.
 #         uvicorn --reload detecta el cambio y reinicia el servidor solo.
 # CONCLUSION:
+# Al cambiar cualquier parte del archivo, como el mensaje, 
+# se recarga la aplicación y se observa inmediatamente el efecto.
+
 
 
 # ======================================================
@@ -157,22 +160,29 @@ def inicio():
 # Para eso usamos HTTPException.
 
 # --- Descomenta el siguiente bloque, ejecuta y observa ---
-# @app.get("/agente/{nombre}")
-# def obtener_agente(nombre: str):
-#     agente = despertar_agente(nombre)
-#     if agente is None:
-#         raise HTTPException(status_code=404, detail=f"Agente '{nombre}' no encontrado")
-#     return agente
-#
-#
-# @app.get("/agentes/")
-# def obtener_todos_los_agentes():
-#     return listar_agentes()
+@app.get("/agente/{nombre}")
+def obtener_agente(nombre: str):
+    agente = despertar_agente(nombre)
+    if agente is None:
+        raise HTTPException(status_code=404, detail=f"Agente '{nombre}' no encontrado")
+    return agente
+
+
+@app.get("/agentes/")
+def obtener_todos_los_agentes():
+    return listar_agentes()
 
 # PRUEBA: Prueba en Swagger UI: busca un agente que exista y uno que no.
 #         ¿Que respuesta recibes? ¿Que codigo HTTP retorna cada caso?
+# - En el caso del agente que existe se retorna una código HTTP 200
+# indicando que el endpoint se ejecutó de forma exitosa(sin errores)
+# y el agente fue encontrado.
+# - En el caso del agente que no existe se retorna una código HTTP 404 
+# indicanddo que el endpoint se ejecutó de forma exitosa(sin errores) y el agente no fue encontrado.
+#
 # CONCLUSION:
-
+# - FastAPI genera facilmente la documentación y expone una función simple como un endpoint.
+#
 
 # ======================================================
 # CAPITULO 5: POST endpoints (10 min)
@@ -191,30 +201,33 @@ def inicio():
 # con detalles de que salio mal. No necesitas escribir validacion manual.
 
 # --- Descomenta el siguiente bloque, ejecuta y observa ---
-# @app.post("/agentes/")
-# def crear_agente(agente: AgenteRequest):
-#     resultado = registrar_agente(agente.nombre, agente.rol, agente.energia)
-#     return {"mensaje": resultado}
-#
-#
-# @app.post("/mensajes/")
-# def crear_mensaje(mensaje: MensajeRequest):
-#     resultado = enviar_mensaje(mensaje.remitente, mensaje.destinatario, mensaje.contenido)
-#     return {"mensaje": resultado}
-#
-#
-# @app.get("/mensajes/{nombre}")
-# def obtener_mensajes(nombre: str):
-#     return leer_mensajes(nombre)
+@app.post("/agentes/")
+def crear_agente(agente: AgenteRequest):
+    resultado = registrar_agente(agente.nombre, agente.rol, agente.energia)
+    return {"mensaje": resultado}
+
+
+@app.post("/mensajes/")
+def crear_mensaje(mensaje: MensajeRequest):
+    resultado = enviar_mensaje(mensaje.remitente, mensaje.destinatario, mensaje.contenido)
+    return {"mensaje": resultado}
+
+
+@app.get("/mensajes/{nombre}")
+def obtener_mensajes(nombre: str):
+    return leer_mensajes(nombre)
 
 # PRUEBA: En Swagger UI: crea un agente nuevo via POST /agentes/.
 #         Luego consultalo via GET /agente/{nombre}. ¿Aparece?
+# Si, se registra y el endpoint devuelve un código 200 indicando que fue exitoso.
 # PRUEBA: Envia un mensaje via POST /mensajes/.
 #         Luego consulta la bandeja via GET /mensajes/{nombre}.
+# El mensaje se registra correctamente, tal como si se hubiera llamado la función.
 # PRUEBA: Intenta enviar un POST con energia="hola" en vez de un numero.
 #         ¿Que error recibes? Esa es la validacion automatica de Pydantic.
+# La aplicación retorna un mensaje HTTP 422 Error: Unprocessable Content. En el detalle de la respuesta se indica que el valor enviado a la variable energía debe ser entero.
 # CONCLUSION:
-
+# Con FastAPI logramos exponer endpoints no solo de GET sino POST de forma rápida, ademas utilizando Pydantic para validar la correcta estructura y tipado del JSON entrante.
 
 # -----------------------------------------------------------#
 # Felicidades! Ya tienes un servidor web que expone tus agentes
