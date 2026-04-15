@@ -119,3 +119,14 @@ También se configura un timeout explícito, definido en `EXTERNAL_API_TIMEOUT`,
 
 ### API Externa
 - Advice Slip API: [https://api.adviceslip.com/](https://api.adviceslip.com/)
+
+## Evidencias
+
+### Consumo de API definiendo llave
+![Consumo de API definiendo llave](evidencia_endpoint_con_llave.png)
+
+### Consumo de API sin definir llave
+![Consumo de API sin definir llave](evidencia_endpoint_sin_llave.png)
+
+### Consumir briefing
+![Consumir briefing](evidencia_briefing_api_externo.png)
